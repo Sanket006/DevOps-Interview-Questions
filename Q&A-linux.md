@@ -200,121 +200,121 @@ A package manager is a tool used to install, update, and remove software. Exampl
 
 # Additional Linux Interview Questions (Intermediate Level)
 
-## 51. What is the difference between su and sudo?
+## 31. What is the difference between su and sudo?
 
 `su` switches to another user (usually root) and requires that user’s password. `sudo` allows permitted users to run specific commands as root using their own password, offering better security and auditing.
 
 ---
 
-## 52. What is the purpose of /etc/fstab?
+## 32. What is the purpose of /etc/fstab?
 
 `/etc/fstab` defines how and where file systems are mounted at boot time. It contains information about devices, mount points, file system types, and mount options.
 
 ---
 
-## 53. What is inode in Linux?
+## 33. What is inode in Linux?
 
 An inode stores metadata about a file such as permissions, ownership, size, and timestamps, but not the filename or file data.
 
 ---
 
-## 54. What happens when a file is deleted in Linux?
+## 34. What happens when a file is deleted in Linux?
 
 When a file is deleted, the link to its inode is removed. If no hard links remain and the file is not in use, the data blocks are freed.
 
 ---
 
-## 55. What is the nice and renice command?
+## 35. What is the nice and renice command?
 
 `nice` starts a process with a specific priority, while `renice` changes the priority of an already running process. Lower nice values mean higher priority.
 
 ---
 
-## 56. What is load average in Linux?
+## 36. What is load average in Linux?
 
 Load average represents the average number of processes waiting for CPU or I/O over 1, 5, and 15 minutes. High load indicates system stress.
 
 ---
 
-## 57. What is the difference between df and du?
+## 37. What is the difference between df and du?
 
 `df` reports disk usage at the filesystem level, while `du` reports disk usage at the file and directory level.
 
 ---
 
-## 58. What is SELinux?
+## 38. What is SELinux?
 
 SELinux (Security-Enhanced Linux) is a security module that enforces access control policies to limit what processes can do, even if they run as root.
 
 ---
 
-## 59. What are Linux file permissions?
+## 39. What are Linux file permissions?
 
 Linux permissions define who can read, write, or execute a file. Permissions are set for owner, group, and others using `r`, `w`, and `x`.
 
 ---
 
-## 60. What is umask?
+## 40. What is umask?
 
 `umask` defines default permissions for newly created files and directories by subtracting permissions from system defaults.
 
 ---
 
-## 61. What is the difference between soft link and hard link?
+## 41. What is the difference between soft link and hard link?
 
 A hard link points directly to the inode, while a soft link points to the file path. Hard links remain valid even if the original file is deleted.
 
 ---
 
-## 62. What is the purpose of tar?
+## 42. What is the purpose of tar?
 
 `tar` is used to archive multiple files into a single file. It is commonly used with compression tools like `gzip` or `bzip2`.
 
 ---
 
-## 63. What is the free command?
+## 43. What is the free command?
 
 `free` shows memory usage including total, used, free, and available memory, along with swap usage.
 
 ---
 
-## 64. What is swapiness (swappiness)?
+## 44. What is swapiness (swappiness)?
 
 Swappiness controls how aggressively the kernel moves processes from RAM to swap. Lower values prefer RAM usage; higher values use swap more often.
 
 ---
 
-## 65. What is the uptime command?
+## 45. What is the uptime command?
 
 `uptime` shows how long the system has been running, number of logged-in users, and load average.
 
 ---
 
-## 66. What is journald?
+## 46. What is journald?
 
 `journald` is a systemd service that collects and manages system logs in binary format, accessible via `journalctl`.
 
 ---
 
-## 67. What is the purpose of journalctl?
+## 47. What is the purpose of journalctl?
 
 `journalctl` is used to view and analyze logs collected by systemd, including service-specific logs.
 
 ---
 
-## 68. What is the difference between service and systemctl?
+## 48. What is the difference between service and systemctl?
 
 `service` works with SysVinit scripts, while `systemctl` manages services in systemd-based systems and provides more control and features.
 
 ---
 
-## 69. What is an environment variable?
+## 49. What is an environment variable?
 
 An environment variable stores configuration values that affect system and application behavior, such as `PATH` or `HOME`.
 
 ---
 
-## 70. What is the purpose of the export command?
+## 50. What is the purpose of the export command?
 
 `export` makes a shell variable available to child processes and scripts.
 
