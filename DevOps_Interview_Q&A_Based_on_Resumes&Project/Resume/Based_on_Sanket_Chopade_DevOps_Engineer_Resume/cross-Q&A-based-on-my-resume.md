@@ -256,8 +256,7 @@ Infrastructure components such as VPC, subnets, EC2 instances, load balancers, a
 By using reusable modules and automated execution, the entire infrastructure could be deployed with a single Terraform command.
 
 **Result**
-This automation significantly reduced manual effort, improved consistency across environments, and reduced infrastructure provisioning time by approximately 40%.. How does Auto Scaling work with ALB?
-Definition → How it Works → Example
+This automation significantly reduced manual effort, improved consistency across environments, and reduced infrastructure provisioning time by approximately 40%.
 
 ---
 
