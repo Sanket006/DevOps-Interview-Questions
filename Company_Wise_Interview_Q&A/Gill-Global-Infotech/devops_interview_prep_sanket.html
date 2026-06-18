@@ -1,0 +1,278 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.wrap{padding:1rem 0}
+.header{margin-bottom:1.5rem}
+.header h2{font-size:18px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.header p{font-size:13px;color:var(--color-text-secondary)}
+.q-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:10px;overflow:hidden}
+.q-header{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;cursor:pointer;user-select:none}
+.q-header:hover{background:var(--color-background-secondary)}
+.q-num{width:26px;height:26px;border-radius:50%;background:#E6F1FB;color:#0C447C;font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.q-title{flex:1;font-size:14px;font-weight:500;color:var(--color-text-primary);line-height:1.4}
+.q-tag{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500;flex-shrink:0;margin-top:2px}
+.tag-arch{background:#EAF3DE;color:#27500A}
+.tag-cicd{background:#FAEEDA;color:#633806}
+.tag-net{background:#EEEDFE;color:#3C3489}
+.tag-k8s{background:#E1F5EE;color:#085041}
+.tag-iac{background:#FAECE7;color:#993C1D}
+.tag-mon{background:#E6F1FB;color:#0C447C}
+.tag-beh{background:#FBEAF0;color:#72243E}
+.chevron{font-size:16px;color:var(--color-text-secondary);transition:transform 0.2s;flex-shrink:0;margin-top:3px}
+.chevron.open{transform:rotate(180deg)}
+.q-body{display:none;padding:0 16px 16px 54px;border-top:0.5px solid var(--color-border-tertiary)}
+.q-body.open{display:block}
+.section{margin-top:12px}
+.section-label{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
+.point{font-size:13px;color:var(--color-text-primary);line-height:1.6;padding:3px 0 3px 14px;border-left:2px solid var(--color-border-secondary);margin-bottom:4px}
+.point strong{font-weight:500}
+.tip{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 12px;font-size:12px;color:var(--color-text-secondary);margin-top:10px;line-height:1.5}
+.tip b{color:var(--color-text-primary);font-weight:500}
+</style>
+
+<div class="wrap">
+<div class="header">
+  <h2>Top 10 interview questions — tailored to your resume</h2>
+  <p>Click any question to expand the answer. Each answer is mapped to your actual experience.</p>
+</div>
+
+<div id="qs"></div>
+</div>
+
+<script>
+const qs = [
+  {
+    num:1, tag:"arch", tagLabel:"Architecture", title:"Explain your Kubernetes architecture",
+    sections:[
+      {label:"Concept",points:["Kubernetes is a container orchestration platform. In EKS (AWS-managed), the control plane (API server, etcd, scheduler, controller manager) is managed by AWS. You own the worker nodes."]},
+      {label:"Your architecture (ApnaKart)",points:[
+        "10 Spring Boot microservices, each deployed as a separate Kubernetes Deployment on EKS",
+        "Each service has its own RDS database — database-per-service pattern to avoid cross-service coupling",
+        "Ingress controller routes external traffic to ClusterIP services internally",
+        "HPA (Horizontal Pod Autoscaler) scales pods based on CPU/memory thresholds — absorbed 5× peak load in Flight Reservation",
+        "RBAC enforced least-privilege access per service account",
+        "ConfigMaps for non-sensitive config, Secrets for credentials — never hardcoded in images",
+        "Rolling updates as default deployment strategy — zero downtime guaranteed"
+      ]},
+      {label:"Troubleshooting angle",points:["If a pod crashes: kubectl describe pod → kubectl logs → check liveness/readiness probes → check resource limits → check image pull errors"]}
+    ],
+    tip:"Lead with the architecture diagram in your head, then say: 'At Hisan Labs, we ran 10 microservices on EKS. Let me walk you through how traffic flows in.'"
+  },
+  {
+    num:2, tag:"cicd", tagLabel:"CI/CD", title:"Explain your CI/CD pipeline",
+    sections:[
+      {label:"Your pipeline (Hisan Labs)",points:[
+        "Trigger: GitHub push/PR webhook → Jenkins job starts",
+        "Stage 1 — Build: Maven compiles Spring Boot app, runs unit tests",
+        "Stage 2 — Code quality: SonarQube static analysis — fails pipeline if critical issues found",
+        "Stage 3 — Image build: Docker multi-stage build, Trivy scans for vulnerabilities",
+        "Stage 4 — Push: Docker image tagged and pushed to ECR",
+        "Stage 5 — Deploy: kubectl apply triggers rolling update on EKS",
+        "Result: 45 min → 10 min (77% faster), 3× higher release frequency"
+      ]},
+      {label:"Key concepts",points:[
+        "Declarative Jenkinsfile in repo — pipeline-as-code, version controlled",
+        "Credentials stored in Jenkins credentials manager, never in code",
+        "Webhook ensures pipeline triggers on every push — no manual intervention"
+      ]}
+    ],
+    tip:"Draw the pipeline stages linearly when explaining. Mention the 77% improvement metric — interviewers love hard numbers."
+  },
+  {
+    num:3, tag:"net", tagLabel:"AWS", title:"Difference between Security Group and NACL",
+    sections:[
+      {label:"Security Group",points:[
+        "Instance-level firewall — attached to EC2, RDS, ALB, etc.",
+        "Stateful: if inbound traffic is allowed, the return traffic is automatically allowed",
+        "Only allow rules — no explicit deny",
+        "Evaluated before traffic reaches the instance"
+      ]},
+      {label:"NACL (Network ACL)",points:[
+        "Subnet-level firewall — all resources in a subnet inherit it",
+        "Stateless: you must explicitly allow inbound AND outbound",
+        "Both allow and deny rules, evaluated in order by rule number",
+        "First line of defense before traffic hits the Security Group"
+      ]},
+      {label:"Real usage",points:[
+        "Your Terraform provisioned VPCs with public/private subnets — ALB in public, EKS nodes and RDS in private",
+        "NACLs block unwanted IP ranges at subnet level; SGs restrict port access at instance level"
+      ]}
+    ],
+    tip:"A common follow-up: 'If you allow port 80 in SG but NACL denies it, what happens?' Answer: traffic is blocked — NACL is evaluated first at subnet level."
+  },
+  {
+    num:4, tag:"k8s", tagLabel:"K8s Debug", title:"Pod is in CrashLoopBackOff. How do you debug?",
+    sections:[
+      {label:"Step-by-step",points:[
+        "kubectl get pods — confirm status is CrashLoopBackOff",
+        "kubectl describe pod <name> — check Events section for OOMKilled, image pull errors, failed probes",
+        "kubectl logs <pod> --previous — get logs from the crashed container (not the current restart)",
+        "Check resource limits — OOMKilled means the container exceeded memory limits, increase or fix memory leak",
+        "Check liveness probe — if misconfigured, K8s kills a healthy pod in a loop",
+        "Check image — wrong tag, ECR auth failure, or corrupt image causes crash on start",
+        "Check env vars / Secrets / ConfigMaps — missing config crashes app at startup"
+      ]},
+      {label:"From your experience",points:[
+        "In ApnaKart, you enforced resource limits on all deployments — a pod hitting limit causes OOMKilled CrashLoop",
+        "Self-healing restarts (configured via Deployments) mean the pod keeps restarting — you need to fix root cause"
+      ]}
+    ],
+    tip:"Interviewers want to hear a systematic debugging flow, not just 'check logs'. Mention kubectl describe first — Events section reveals the cause 80% of the time."
+  },
+  {
+    num:5, tag:"cicd", tagLabel:"CI/CD", title:"Jenkins build fails. How do you debug?",
+    sections:[
+      {label:"Step-by-step",points:[
+        "Open Jenkins Console Output — read the error, don't guess",
+        "Stage-level failure: identify which stage failed (Build, Test, SonarQube, Docker, Deploy)",
+        "Build failures: dependency download failed (check nexus/network), compilation error (code issue)",
+        "Test failures: unit test broke — check if it's a flaky test or a real regression",
+        "SonarQube gate failure: code quality threshold breached — review the issues found",
+        "Docker failures: base image pull rate limit (DockerHub), disk space full on Jenkins agent",
+        "Deploy failures: kubectl context wrong, kubeconfig not mounted, EKS API unreachable"
+      ]},
+      {label:"Rollback",points:[
+        "kubectl rollout undo deployment/<name> — instantly rolls back to previous stable version",
+        "In blue-green: switch ALB target group back to blue environment"
+      ]}
+    ],
+    tip:"Mention that you store Jenkins credentials securely and that your Jenkinsfile is in version control — shows maturity."
+  },
+  {
+    num:6, tag:"arch", tagLabel:"Containers", title:"Docker vs Kubernetes — when do you use what?",
+    sections:[
+      {label:"Docker",points:[
+        "Container runtime — packages app + dependencies into an image",
+        "Docker alone is fine for local dev, single-server deployments, simple apps",
+        "Docker Compose: manages multi-container apps on a single host"
+      ]},
+      {label:"Kubernetes",points:[
+        "Container orchestration — manages containers at scale across multiple nodes",
+        "Handles auto-healing, scaling, rolling updates, service discovery, config management",
+        "Required when you have multiple services, need HA, or need to scale independently"
+      ]},
+      {label:"Your usage",points:[
+        "Both projects: Docker for containerising each microservice with multi-stage builds (60% size reduction in Flight Reservation)",
+        "Kubernetes (EKS) for orchestrating 10 services in ApnaKart — HPA for auto-scaling, Ingress for routing, RBAC for security",
+        "Docker alone would have required manual restarts and no auto-scaling"
+      ]}
+    ],
+    tip:"The real answer: Docker builds the container, Kubernetes runs it at scale. You need both. Mention your 60% image size reduction — it shows you care about efficiency."
+  },
+  {
+    num:7, tag:"iac", tagLabel:"Terraform", title:"Explain Terraform workflow",
+    sections:[
+      {label:"Core workflow",points:[
+        "terraform init — downloads providers (AWS), initialises backend (S3 for remote state)",
+        "terraform plan — dry run, shows what will be created/changed/destroyed. Never skip this.",
+        "terraform apply — executes the plan. Use -auto-approve only in CI pipelines with safeguards.",
+        "terraform destroy — tears down all managed resources"
+      ]},
+      {label:"State management",points:[
+        "State file tracks real-world resource → Terraform config mapping",
+        "Remote state in S3 with DynamoDB locking — prevents two engineers applying simultaneously",
+        "If state is corrupted: terraform state list, terraform state rm to repair, terraform import to re-adopt resources"
+      ]},
+      {label:"Your usage",points:[
+        "Provisioned EKS, RDS, VPC, IAM, S3, ALB, CloudFront for ApnaKart using modular Terraform",
+        "Reduced provisioning time by 40% with fully repeatable deployments",
+        "Modular structure: separate modules for network, compute, storage — reusable across environments"
+      ]}
+    ],
+    tip:"Be ready for: 'Two engineers ran apply simultaneously — what happens?' Answer: DynamoDB state lock prevents it. Second apply waits or fails with a lock error."
+  },
+  {
+    num:8, tag:"mon", tagLabel:"Monitoring", title:"How do you monitor applications?",
+    sections:[
+      {label:"Your stack",points:[
+        "Prometheus: scrapes metrics from application endpoints (/metrics) and node exporters on intervals",
+        "Grafana: dashboards visualising CPU, memory, request rate, error rate, latency (RED method)",
+        "Datadog: APM, log aggregation, alerting — particularly useful for distributed tracing across microservices",
+        "AWS CloudWatch: EC2/EKS/RDS metrics, log groups, and alarms for infra-level alerts"
+      ]},
+      {label:"What you monitor",points:[
+        "Infrastructure: CPU, memory, disk I/O, network on EKS nodes",
+        "Application: request rate, error rate, P95/P99 latency per service",
+        "Kubernetes: pod restarts, pending pods, HPA scaling events, node NotReady",
+        "Deployments: compare error rate before and after deploy — auto rollback trigger if threshold breached"
+      ]},
+      {label:"Result",points:[
+        "MTTR reduced by 30% at Hisan Labs — proactive alerting caught issues before users noticed"
+      ]}
+    ],
+    tip:"Mention the difference: Prometheus is pull-based (scrapes targets), Datadog is push-based (agent sends). Interviewers test this distinction often."
+  },
+  {
+    num:9, tag:"beh", tagLabel:"Behavioral", title:"Tell me about a deployment failure you handled",
+    sections:[
+      {label:"Structure your answer (STAR)",points:[
+        "Situation: Running multi-stage Jenkins pipeline for ApnaKart; a release to production broke the auth service",
+        "Task: Identify root cause, minimise downtime, restore service",
+        "Action: Checked Grafana — spike in 5xx errors on auth service immediately post-deploy. kubectl logs showed DB connection timeout. Investigated — new Terraform change had modified RDS security group, blocking EKS node traffic. kubectl rollout undo restored the app in under 2 minutes. Fixed SG in Terraform and re-applied.",
+        "Result: Zero-downtime rollback with blue-green strategy. Root cause fixed and added SG validation check to pipeline."
+      ]},
+      {label:"What this shows",points:[
+        "End-to-end ownership: you detected, diagnosed, fixed, and prevented recurrence",
+        "Monitoring-first mindset: Grafana was the first tool, not trial and error",
+        "IaC discipline: fix went through Terraform, not console — prevents drift"
+      ]}
+    ],
+    tip:"If you don't have a real production incident, adapt a scenario from your internship. Interviewers want structured thinking, not drama. STAR format always."
+  },
+  {
+    num:10, tag:"arch", tagLabel:"Project", title:"Explain one project end-to-end",
+    sections:[
+      {label:"ApnaKart — walk-through",points:[
+        "Problem: 10 Spring Boot microservices needed reliable cloud infra, fast deployments, and observability",
+        "Infrastructure: Modular Terraform provisioned EKS, RDS (database-per-service), VPC (public ALB + private EKS/RDS), IAM roles per service",
+        "CI/CD: Jenkins pipeline — Maven build → SonarQube → Docker multi-stage build → Trivy scan → ECR push → kubectl rolling deploy",
+        "Kubernetes: Deployments + HPA (auto-scale on CPU) + Ingress (single entry point) + RBAC + ConfigMaps/Secrets",
+        "Monitoring: Prometheus + Grafana for metrics, Datadog for APM, CloudWatch for infra",
+        "Security: Trivy scanned every image, SonarQube gated code quality — zero critical vulnerabilities in prod",
+        "Outcome: 77% faster deployments, 99.9% availability, 35% fewer deployment failures"
+      ]},
+      {label:"How to present it",points:[
+        "Start with the problem, not the tech — shows product thinking",
+        "One sentence per layer: Infra → CI/CD → Orchestration → Monitoring → Security",
+        "End with metrics — the numbers are your proof"
+      ]}
+    ],
+    tip:"Practice saying this in under 3 minutes. Time yourself. Interviewers lose attention after 4 minutes. Use: 'Shall I go deeper on any layer?' — shows confidence."
+  }
+];
+
+const tagMap={arch:"tag-arch",cicd:"tag-cicd",net:"tag-net",k8s:"tag-k8s",iac:"tag-iac",mon:"tag-mon",beh:"tag-beh"};
+
+const container=document.getElementById("qs");
+qs.forEach(q=>{
+  const card=document.createElement("div");
+  card.className="q-card";
+  const sectHtml=q.sections.map(s=>`
+    <div class="section">
+      <div class="section-label">${s.label}</div>
+      ${s.points.map(p=>`<div class="point">${p}</div>`).join("")}
+    </div>
+  `).join("");
+  card.innerHTML=`
+    <div class="q-header" onclick="toggle(this)">
+      <div class="q-num">${q.num}</div>
+      <div class="q-title">${q.title}</div>
+      <span class="q-tag ${tagMap[q.tag]}">${q.tagLabel}</span>
+      <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+    </div>
+    <div class="q-body">
+      ${sectHtml}
+      <div class="tip"><b>Interview tip:</b> ${q.tip}</div>
+    </div>
+  `;
+  container.appendChild(card);
+});
+
+function toggle(header){
+  const body=header.nextElementSibling;
+  const ch=header.querySelector(".chevron");
+  const open=body.classList.toggle("open");
+  ch.classList.toggle("open",open);
+}
+</script>

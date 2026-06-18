@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevOps Interview Prep — Sanket Chopade</title>
+<style>
+  :root {
+    --bg: #0d0d0d;
+    --bg2: #141414;
+    --bg3: #1a1a1a;
+    --bg4: #222;
+    --border: #2a2a2a;
+    --border2: #333;
+    --text: #e8e8e8;
+    --text2: #a0a0a0;
+    --text3: #666;
+    --accent: #00d9a6;
+    --accent2: #0084ff;
+    --warn: #f59e0b;
+    --danger: #ef4444;
+    --success: #22c55e;
+    --purple: #a78bfa;
+    --mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    --sans: 'Inter', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  /* ─── Header ─── */
+  .header {
+    padding: 2rem 2rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 100;
+  }
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+  .title { font-size: 20px; font-weight: 700; color: var(--accent); letter-spacing: -0.5px; font-family: var(--mono); }
+  .subtitle { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .progress-bar { height: 3px; background: var(--border); border-radius: 2px; margin-top: 0.75rem; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.3s; width: 0%; }
+  .progress-label { font-size: 11px; color: var(--text3); margin-top: 4px; }
+  /* ─── Controls ─── */
+  .controls {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    position: sticky;
+    top: 132px;
+    z-index: 99;
+  }
+  .search-wrap { position: relative; flex: 1; min-width: 180px; max-width: 320px; }
+  .search-wrap input {
+    width: 100%; background: var(--bg3); border: 1px solid var(--border2);
+    color: var(--text); padding: 6px 10px 6px 30px; border-radius: 6px;
+    font-size: 13px; outline: none;
+  }
+  .search-wrap input:focus { border-color: var(--accent); }
+  .search-icon { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); color: var(--text3); font-size: 13px; }
+  .filter-btn {
+    padding: 5px 12px; border-radius: 6px; border: 1px solid var(--border2);
+    background: var(--bg3); color: var(--text2); font-size: 12px; cursor: pointer; transition: all 0.15s;
+    font-family: var(--sans);
+  }
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 600; }
+  /* ─── Main Layout ─── */
+  .main { padding: 1.5rem 2rem 4rem; max-width: 960px; margin: 0 auto; }
+  /* ─── Section ─── */
+  .section { margin-bottom: 2rem; }
+  .section-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 0.75rem; cursor: pointer; user-select: none;
+    padding: 8px 0;
+  }
+  .section-icon { font-size: 16px; }
+  .section-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text2); }
+  .section-count { font-size: 11px; background: var(--bg3); border: 1px solid var(--border2); padding: 2px 7px; border-radius: 10px; color: var(--text3); margin-left: auto; }
+  .section-toggle { color: var(--text3); margin-left: 8px; font-size: 11px; transition: transform 0.2s; }
+  .section-toggle.open { transform: rotate(90deg); }
+  /* ─── QA Card ─── */
+  .qa-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 8px; margin-bottom: 6px;
+    transition: border-color 0.15s;
+  }
+  .qa-card:hover { border-color: var(--border2); }
+  .qa-card.done { border-left: 3px solid var(--accent); opacity: 0.7; }
+  .qa-card.hidden { display: none; }
+  .qa-q {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px 14px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text);
+  }
+  .qa-q:hover { background: var(--bg3); border-radius: 8px 8px 0 0; }
+  .q-num { font-family: var(--mono); font-size: 11px; color: var(--text3); min-width: 26px; padding-top: 1px; }
+  .q-text { flex: 1; }
+  .q-tag {
+    font-size: 10px; padding: 2px 7px; border-radius: 4px; white-space: nowrap;
+    border: 1px solid; font-weight: 600; letter-spacing: 0.3px;
+  }
+  .tag-hard { color: var(--danger); border-color: #3a1515; background: #1f0d0d; }
+  .tag-med { color: var(--warn); border-color: #3a2a00; background: #1f1600; }
+  .tag-easy { color: var(--success); border-color: #0d2e1a; background: #051408; }
+  .tag-fire { color: var(--purple); border-color: #2a1f40; background: #120d1e; }
+  .q-arrow { color: var(--text3); font-size: 11px; transition: transform 0.2s; padding-top: 2px; }
+  .q-arrow.open { transform: rotate(180deg); }
+  .qa-a {
+    display: none; padding: 0 14px 14px 50px; font-size: 13px; color: var(--text2); line-height: 1.7;
+  }
+  .qa-a.open { display: block; }
+  .qa-a p { margin-bottom: 8px; }
+  .qa-a p:last-child { margin-bottom: 0; }
+  .qa-a ul { padding-left: 1.2rem; margin-bottom: 8px; }
+  .qa-a ul li { margin-bottom: 3px; }
+  .qa-a strong { color: var(--text); font-weight: 600; }
+  code {
+    font-family: var(--mono); font-size: 12px; background: var(--bg4);
+    padding: 1px 5px; border-radius: 3px; color: var(--accent);
+  }
+  pre {
+    background: var(--bg4); border: 1px solid var(--border2); border-radius: 6px;
+    padding: 10px 12px; margin: 8px 0; overflow-x: auto;
+    font-family: var(--mono); font-size: 12px; color: #c9d1d9; line-height: 1.5;
+  }
+  .done-btn {
+    margin-top: 10px; padding: 5px 12px; border-radius: 5px; border: 1px solid var(--border2);
+    background: var(--bg); color: var(--text3); font-size: 11px; cursor: pointer; font-family: var(--sans);
+    transition: all 0.15s;
+  }
+  .done-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .qa-card.done .done-btn { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 600; }
+  .apnakart-badge {
+    display: inline-block; font-size: 10px; background: #0d1e12; border: 1px solid #0d3a1e;
+    color: #22c55e; padding: 1px 7px; border-radius: 4px; margin-left: 6px;
+  }
+  .highlight-box {
+    background: #0d1a14; border: 1px solid #0d3a24; border-radius: 6px;
+    padding: 8px 12px; margin: 8px 0; font-size: 12px; color: #5eead4;
+  }
+  .scenario-flow {
+    display: flex; flex-direction: column; gap: 4px; margin: 8px 0;
+  }
+  .flow-step {
+    display: flex; align-items: flex-start; gap: 8px; padding: 5px 0;
+    border-bottom: 1px solid var(--border); font-size: 12px;
+  }
+  .flow-step:last-child { border-bottom: none; }
+  .step-num { color: var(--accent); font-family: var(--mono); font-size: 11px; min-width: 20px; font-weight: 700; }
+  .no-results { color: var(--text3); text-align: center; padding: 3rem; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="title">$ devops-interview-prep</div>
+      <div class="subtitle">Combined Q&A — Kubernetes · AWS · CI/CD · Scenarios | Anchored to ApnaKart + Hisan Labs</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:22px;font-weight:700;color:var(--accent)" id="done-count">0</div>
+      <div style="font-size:11px;color:var(--text3)">reviewed</div>
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  <div class="progress-label" id="progress-label">0 / 0 questions reviewed</div>
+</div>
+
+<div class="controls">
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" placeholder="Search questions..." id="search-input" oninput="filterAll()">
+  </div>
+  <button class="filter-btn active" onclick="filterSection('all', this)">All</button>
+  <button class="filter-btn" onclick="filterSection('core', this)">K8s Core</button>
+  <button class="filter-btn" onclick="filterSection('net', this)">Networking</button>
+  <button class="filter-btn" onclick="filterSection('aws', this)">AWS</button>
+  <button class="filter-btn" onclick="filterSection('scenario', this)">Scenarios</button>
+  <button class="filter-btn" onclick="filterSection('cicd', this)">CI/CD</button>
+  <button class="filter-btn" onclick="filterSection('pro', this)">Pro Level</button>
+  <button class="filter-btn" onclick="filterSection('rapid', this)">Rapid-Fire</button>
+</div>
+
+<div class="main" id="main-content">
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SECTION: K8s CORE -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" data-section="core">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-icon">☸</span>
+    <span class="section-title">Kubernetes Core</span>
+    <span class="section-count">10 Q</span>
+    <span class="section-toggle open">▶</span>
+  </div>
+  <div class="section-body">
+
+  <div class="qa-card" data-section="core">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">01</span>
+      <span class="q-text">What is a pod and why is it the smallest unit in Kubernetes?</span>
+      <span class="q-tag tag-easy">easy</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p>A pod is a wrapper around one or more containers that share the <strong>same network namespace, IP address, and storage volumes</strong>. Kubernetes doesn't schedule individual containers — it schedules pods.</p>
+      <p>Containers in the same pod communicate via <code>localhost</code>. They share the pod's lifecycle: if the pod dies, all containers in it die.</p>
+      <p><strong>Why smallest?</strong> K8s needs a schedulable unit above a container — something that can encapsulate co-located processes (e.g., an app + a log sidecar) as a single unit of deployment, scaling, and networking. That unit is the pod.</p>
+      <div class="highlight-box">In ApnaKart: each microservice ran as its own pod in its namespace. Datadog agent ran as a DaemonSet pod — one per node, sharing the node's network namespace.</div>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="core">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">02</span>
+      <span class="q-text">Difference between Deployment, StatefulSet, and DaemonSet?</span>
+      <span class="q-tag tag-med">medium</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p><strong>Deployment</strong> — Stateless workloads. Pods are interchangeable, no stable identity. Rolling updates, scaling, rollbacks. Used for APIs, web apps. In ApnaKart: all 10 Spring Boot microservices ran as Deployments.</p>
+      <p><strong>StatefulSet</strong> — Stateful workloads needing stable identity. Pods get ordered names (pod-0, pod-1), stable DNS (<code>pod-0.svc.ns.svc.cluster.local</code>), persistent volume per pod. Ordered deploy/scale/delete. Used for MySQL, Cassandra, Kafka.</p>
+      <p><strong>DaemonSet</strong> — Runs exactly one pod per node (or matching nodes). Pod follows node lifecycle. Used for node-level agents. In ApnaKart: <strong>Datadog agent deployed as DaemonSet</strong> — ensured every EKS node had APM collection running.</p>
+      <div class="highlight-box">Interview tip: always tie DaemonSet to Datadog from your project. It shows real-world usage, not textbook knowledge.</div>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="core">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">03</span>
+      <span class="q-text">What is CrashLoopBackOff and how do you debug it?</span>
+      <span class="q-tag tag-hard">hard</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p><strong>CrashLoopBackOff</strong> = pod starts, container crashes, K8s waits before restarting (backoff: 10s → 20s → 40s → 80s → 160s → max 5min), then retries. It's not a crash type — it's a restart loop state.</p>
+      <p><strong>Debug steps:</strong></p>
+      <div class="scenario-flow">
+        <div class="flow-step"><span class="step-num">1</span><span><code>kubectl describe pod &lt;pod&gt; -n &lt;ns&gt;</code> → check <strong>Last State</strong> and <strong>Events</strong> section</span></div>
+        <div class="flow-step"><span class="step-num">2</span><span><code>kubectl logs &lt;pod&gt; --previous</code> → logs from the crashed container</span></div>
+        <div class="flow-step"><span class="step-num">3</span><span>Check exit code: <code>137</code>=OOMKilled, <code>1</code>=app error, <code>139</code>=segfault, <code>0</code>=liveness probe killing healthy container</span></div>
+        <div class="flow-step"><span class="step-num">4</span><span>Verify env vars, ConfigMaps, Secrets are correctly mounted</span></div>
+        <div class="flow-step"><span class="step-num">5</span><span>Check if liveness probe is too aggressive (low <code>initialDelaySeconds</code>)</span></div>
+        <div class="flow-step"><span class="step-num">6</span><span>Check if dependent services (DB, API) are reachable</span></div>
+        <div class="flow-step"><span class="step-num">7</span><span>Test container standalone: <code>kubectl run debug --image=&lt;img&gt; -- sleep 3600</code> then exec in</span></div>
+      </div>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="core">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">04</span>
+      <span class="q-text">What happens when a pod goes into Evicted state?</span>
+      <span class="q-tag tag-med">medium</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p>Kubelet evicts pods when a node is under resource pressure (memory, disk, PIDs). The pod is <strong>terminated immediately</strong> — not gracefully restarted on the same node.</p>
+      <p>The evicted pod object remains in etcd with <code>status: Evicted</code> until manually deleted or garbage collected. The scheduler creates a <strong>new replacement pod</strong> on a different node (if it was managed by a Deployment/ReplicaSet).</p>
+      <p><strong>Key difference from CrashLoopBackOff:</strong> Eviction is node-driven (resource pressure), not app-driven (process crash).</p>
+      <pre>kubectl get pods --field-selector status.phase=Failed -A | grep Evicted
+kubectl delete pods --field-selector status.phase=Failed -n &lt;ns&gt;</pre>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="core">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">05</span>
+      <span class="q-text">Difference between OOMKilled and Evicted?</span>
+      <span class="q-tag tag-med">medium</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p><strong>OOMKilled</strong> (exit code 137):</p>
+      <ul>
+        <li>Container exceeded its <strong>memory limit</strong></li>
+        <li>Linux kernel OOM killer terminates that specific container</li>
+        <li>Pod may restart (depending on <code>restartPolicy</code>)</li>
+        <li>Only the offending container is killed, not the whole pod</li>
+        <li>Seen in <code>kubectl describe pod</code> → <code>Last State: OOMKilled</code></li>
+      </ul>
+      <p><strong>Evicted</strong>:</p>
+      <ul>
+        <li>Entire pod removed by <strong>kubelet</strong> due to node-level resource exhaustion</li>
+        <li>Not caused by a single container's limit — node is running out of memory/disk globally</li>
+        <li>Pod is not restarted on same node — scheduler picks a new node</li>
+        <li>Pod status becomes <code>Failed</code> with reason <code>Evicted</code></li>
+      </ul>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="core">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">06</span>
+      <span class="q-text">How does Kubernetes decide which pod to evict?</span>
+      <span class="q-tag tag-hard">hard</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p>Kubelet evicts in this priority order (lowest first):</p>
+      <ul>
+        <li><strong>BestEffort</strong> pods first — no requests or limits defined</li>
+        <li><strong>Burstable</strong> pods using more than their requests — ordered by how much over their request they are</li>
+        <li><strong>Guaranteed</strong> pods last — only evicted if system-level processes need resources</li>
+      </ul>
+      <p>Additionally, <strong>Pod Priority Class</strong> matters — lower <code>priorityClassName</code> value = evicted first within the same QoS tier.</p>
+      <p>Kubelet also considers <strong>hard eviction thresholds</strong> (e.g., <code>memory.available &lt; 100Mi</code>) vs <strong>soft eviction</strong> (with grace period).</p>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="core">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">07</span>
+      <span class="q-text">What are QoS classes — BestEffort, Burstable, Guaranteed?</span>
+      <span class="q-tag tag-med">medium</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p><strong>Guaranteed</strong> — Highest protection. Requires: <code>requests == limits</code> for ALL containers, both CPU and memory.</p>
+      <p><strong>Burstable</strong> — At least one container has requests set, but requests ≠ limits. Or only requests defined. Middle tier.</p>
+      <p><strong>BestEffort</strong> — No requests, no limits for any container. Zero protection. First to be evicted. Do NOT run production workloads as BestEffort.</p>
+      <div class="highlight-box">In ApnaKart: all microservices had explicit requests and limits defined (Burstable or Guaranteed). This contributed to 99.9% availability — pods weren't randomly evicted.</div>
+      <pre>resources:
+  requests:
+    memory: "256Mi"
+    cpu: "250m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"   # Burstable (requests != limits)</pre>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="core">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">08</span>
+      <span class="q-text">How do liveness and readiness probes work?</span>
+      <span class="q-tag tag-med">medium</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p><strong>Liveness probe</strong> — "Is this container alive?" If it fails, kubelet kills the container and restarts it (subject to restartPolicy). Use for detecting deadlocks where the process is running but stuck.</p>
+      <p><strong>Readiness probe</strong> — "Is this container ready to serve traffic?" If it fails, the pod is removed from the Service endpoints. Traffic stops. Pod is NOT restarted. Use for slow startup or temporary unavailability.</p>
+      <p><strong>Startup probe</strong> — Added in K8s 1.16. Delays liveness checks during slow boot. Once startup passes, liveness takes over. Prevents liveness from killing a slow-starting container.</p>
+      <pre>livenessProbe:
+  httpGet:
+    path: /actuator/health/liveness
+    port: 8080
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /actuator/health/readiness
+    port: 8080
+  initialDelaySeconds: 10
+  periodSeconds: 5</pre>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="core">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">09</span>
+      <span class="q-text">What happens if readiness probe fails?</span>
+      <span class="q-tag tag-easy">easy</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p>Pod is removed from the <strong>Service Endpoints list</strong>. kube-proxy updates iptables rules. New requests no longer route to this pod.</p>
+      <p>The pod itself keeps running — kubelet does <strong>NOT restart</strong> it. Once the probe starts passing again, the pod is re-added to endpoints automatically.</p>
+      <p><strong>Common scenario:</strong> During rolling update, new pods fail readiness → stay out of rotation → old pods keep serving → zero downtime. This is why readiness probes are critical for zero-downtime deployments.</p>
+      <pre>kubectl get endpoints &lt;service-name&gt;  # See which pods are in rotation</pre>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="core">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">10</span>
+      <span class="q-text">How do you debug a pod that is not starting?</span>
+      <span class="q-tag tag-hard">hard</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="scenario-flow">
+        <div class="flow-step"><span class="step-num">1</span><span><code>kubectl get pod</code> → identify the state (Pending, ImagePullBackOff, Init:Error, etc.)</span></div>
+        <div class="flow-step"><span class="step-num">2</span><span><code>kubectl describe pod &lt;pod&gt;</code> → read <strong>Events</strong> at the bottom — this is usually the answer</span></div>
+        <div class="flow-step"><span class="step-num">3</span><span><strong>Pending</strong>: Check node resources (<code>kubectl describe node</code>), taints/tolerations, affinity rules, PVC binding</span></div>
+        <div class="flow-step"><span class="step-num">4</span><span><strong>ImagePullBackOff</strong>: Wrong image name/tag, private registry, missing <code>imagePullSecrets</code></span></div>
+        <div class="flow-step"><span class="step-num">5</span><span><strong>Init containers failing</strong>: <code>kubectl logs &lt;pod&gt; -c &lt;init-container-name&gt;</code></span></div>
+        <div class="flow-step"><span class="step-num">6</span><span><strong>CrashLoopBackOff</strong>: <code>kubectl logs &lt;pod&gt; --previous</code> + check exit code</span></div>
+        <div class="flow-step"><span class="step-num">7</span><span>For deep inspection: <code>kubectl debug -it &lt;pod&gt; --image=busybox --copy-to=debug-pod</code></span></div>
+      </div>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SECTION: NETWORKING & DNS -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" data-section="net">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-icon">🌐</span>
+    <span class="section-title">Networking & DNS</span>
+    <span class="section-count">7 Q</span>
+    <span class="section-toggle open">▶</span>
+  </div>
+  <div class="section-body">
+
+  <div class="qa-card" data-section="net">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">11</span>
+      <span class="q-text">How does DNS work inside Kubernetes?</span>
+      <span class="q-tag tag-med">medium</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p>Every pod's <code>/etc/resolv.conf</code> is configured to point to <strong>CoreDNS</strong> (ClusterIP, usually <code>10.96.0.10</code>).</p>
+      <p>Service DNS record: <code>&lt;service&gt;.&lt;namespace&gt;.svc.cluster.local</code></p>
+      <p>Within same namespace: just <code>&lt;service-name&gt;</code> resolves (search domains fill the rest).</p>
+      <p>Pod DNS: <code>&lt;pod-ip-dashes&gt;.&lt;namespace&gt;.pod.cluster.local</code> (e.g., <code>10-0-1-5.default.pod.cluster.local</code>)</p>
+      <pre>cat /etc/resolv.conf  # inside a pod
+# nameserver 10.96.0.10
+# search default.svc.cluster.local svc.cluster.local cluster.local</pre>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="net">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">12</span>
+      <span class="q-text">What is CoreDNS and how do you troubleshoot it?</span>
+      <span class="q-tag tag-hard">hard</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p>CoreDNS is a flexible DNS server deployed as a <strong>Deployment</strong> in <code>kube-system</code> namespace. It replaced kube-dns in K8s 1.13+. Configured via a <strong>Corefile</strong> (ConfigMap).</p>
+      <div class="scenario-flow">
+        <div class="flow-step"><span class="step-num">1</span><span><code>kubectl get pods -n kube-system | grep coredns</code> — are pods Running?</span></div>
+        <div class="flow-step"><span class="step-num">2</span><span><code>kubectl logs -n kube-system &lt;coredns-pod&gt;</code> — look for NXDOMAIN loops, SERVFAIL, OOM</span></div>
+        <div class="flow-step"><span class="step-num">3</span><span><code>kubectl get cm coredns -n kube-system -o yaml</code> — check Corefile config</span></div>
+        <div class="flow-step"><span class="step-num">4</span><span>Check if CoreDNS has resource limits and is getting OOMKilled (common under high DNS traffic)</span></div>
+        <div class="flow-step"><span class="step-num">5</span><span>Enable <code>log</code> plugin in Corefile for debug logging (disable after)</span></div>
+      </div>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="net">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">13</span>
+      <span class="q-text">How do you debug DNS issues in a pod?</span>
+      <span class="q-tag tag-hard">hard</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <pre>kubectl run dns-debug --image=busybox:1.28 --rm -it -- sh
+
+# Inside the pod:
+cat /etc/resolv.conf                                    # check nameserver
+nslookup kubernetes.default                             # test cluster DNS
+nslookup &lt;svc&gt;.&lt;namespace&gt;.svc.cluster.local           # test service DNS
+nslookup google.com                                     # test upstream DNS
+dig @10.96.0.10 &lt;service&gt;.&lt;ns&gt;.svc.cluster.local</pre>
+      <p><strong>Common findings:</strong></p>
+      <ul>
+        <li>Wrong nameserver → CoreDNS ClusterIP changed after restart</li>
+        <li>NXDOMAIN for service → service name/namespace typo, or service doesn't exist</li>
+        <li>Timeout → CoreDNS pod down, or NetworkPolicy blocking UDP 53</li>
+        <li>Slow resolution → high <code>ndots</code> value causing multiple lookup attempts</li>
+      </ul>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="net">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">14</span>
+      <span class="q-text">What is ClusterIP, NodePort, LoadBalancer?</span>
+      <span class="q-tag tag-easy">easy</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p><strong>ClusterIP</strong> — Default. Virtual IP only reachable within the cluster. Used for internal service-to-service communication. Cannot be accessed from outside.</p>
+      <p><strong>NodePort</strong> — Exposes service on every node's IP at a static port (30000–32767). External traffic: <code>NodeIP:NodePort</code>. NodePort wraps ClusterIP — both still work.</p>
+      <p><strong>LoadBalancer</strong> — Provisions a cloud load balancer (AWS ALB/NLB on EKS). External traffic → Cloud LB → NodePort → ClusterIP → Pod. Wraps NodePort wraps ClusterIP.</p>
+      <div class="highlight-box">In ApnaKart on EKS: used AWS ALB (via AWS Load Balancer Controller) as LoadBalancer type, with SSL termination at ALB level and CloudFront in front for CDN caching.</div>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="net">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">15</span>
+      <span class="q-text">What is CNI and how does networking happen between pods?</span>
+      <span class="q-tag tag-hard">hard</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p><strong>CNI (Container Network Interface)</strong> = standard interface for K8s to plug in network providers. kubelet calls CNI plugin when pod is created to set up pod's network interface.</p>
+      <p><strong>AWS VPC CNI</strong> (used on EKS): Each pod gets a real VPC IP (from the node's ENI secondary IPs). No overlay network — pod traffic routed directly via VPC routing tables. Same as EC2 instances. This gives low latency and native VPC security group support.</p>
+      <p><strong>Other CNI plugins:</strong> Calico (eBPF, NetworkPolicy support), Flannel (VXLAN overlay, simpler), Weave (mesh).</p>
+      <p><strong>Pod-to-pod same node:</strong> Via virtual ethernet (veth) pair → bridge.</p>
+      <p><strong>Pod-to-pod cross node:</strong> Via VPC routing (AWS CNI) or VXLAN tunnel (Flannel).</p>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="net">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">16</span>
+      <span class="q-text">How do you debug intermittent packet loss?</span>
+      <span class="q-tag tag-hard">hard</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="scenario-flow">
+        <div class="flow-step"><span class="step-num">1</span><span>Check CNI pod health: <code>kubectl get pods -n kube-system</code> — any CNI pods restarting?</span></div>
+        <div class="flow-step"><span class="step-num">2</span><span>Check MTU mismatch: common with VPN/overlay networks. AWS CNI default MTU is 9001 (jumbo frames). Mismatch causes silent drops.</span></div>
+        <div class="flow-step"><span class="step-num">3</span><span><code>tcpdump -i any -n host &lt;pod-ip&gt;</code> inside node — see if packets arrive but not responded</span></div>
+        <div class="flow-step"><span class="step-num">4</span><span>Check iptables: <code>iptables -L -n -v | grep DROP</code> — unexpected drops?</span></div>
+        <div class="flow-step"><span class="step-num">5</span><span>Check kube-proxy logs — iptables rule corruption is rare but happens</span></div>
+        <div class="flow-step"><span class="step-num">6</span><span>Check node CPU steal time — packet drops under load on shared infra</span></div>
+        <div class="flow-step"><span class="step-num">7</span><span>Use <code>ping</code> with flood test: <code>ping -f -c 1000 &lt;dest&gt;</code> and check loss %</span></div>
+      </div>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="net">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">17</span>
+      <span class="q-text">How does service discovery work in Kubernetes?</span>
+      <span class="q-tag tag-easy">easy</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p>Two mechanisms:</p>
+      <p><strong>DNS-based (primary)</strong>: CoreDNS auto-creates DNS records for every Service. Pod resolves <code>order-service</code> → CoreDNS → returns ClusterIP. Preferred method.</p>
+      <p><strong>Environment variables (legacy)</strong>: K8s injects env vars into pods for services that existed at pod creation time (e.g., <code>ORDER_SERVICE_HOST</code>, <code>ORDER_SERVICE_PORT</code>). Problem: only services created before the pod are available. Not recommended for new apps.</p>
+      <div class="highlight-box">In ApnaKart: all 10 microservices discovered each other via DNS short names within the same namespace. Cross-namespace calls used full FQDN.</div>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SECTION: AWS / CLOUD -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" data-section="aws">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-icon">☁</span>
+    <span class="section-title">AWS / Cloud</span>
+    <span class="section-count">6 Q</span>
+    <span class="section-toggle open">▶</span>
+  </div>
+  <div class="section-body">
+
+  <div class="qa-card" data-section="aws">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">18</span>
+      <span class="q-text">Difference between Internet Gateway and NAT Gateway?</span>
+      <span class="q-tag tag-med">medium</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p><strong>Internet Gateway (IGW)</strong>:</p>
+      <ul>
+        <li>Allows <strong>bidirectional</strong> traffic between VPC resources and the internet</li>
+        <li>Resources need a <strong>public IP or Elastic IP</strong></li>
+        <li>Attached to the VPC, not a subnet</li>
+        <li>Stateful — no extra config for return traffic</li>
+      </ul>
+      <p><strong>NAT Gateway</strong>:</p>
+      <ul>
+        <li>Allows <strong>outbound-only</strong> internet access from private subnets</li>
+        <li>Resources keep their private IPs — NAT translates to NAT's public IP</li>
+        <li>Lives in a public subnet with its own Elastic IP</li>
+        <li>Inbound connections from internet are <strong>not possible</strong></li>
+      </ul>
+      <div class="highlight-box">In ApnaKart: EKS worker nodes in private subnets → used NAT GW for pulling Docker images from DockerHub/ECR. ALB in public subnet handled inbound traffic.</div>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="aws">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">19</span>
+      <span class="q-text">Why is NAT Gateway placed in a public subnet?</span>
+      <span class="q-tag tag-med">medium</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p>NAT Gateway needs to forward outbound traffic to the internet — so it itself needs internet access. A <strong>public subnet</strong> is a subnet whose route table has a <code>0.0.0.0/0 → IGW</code> route.</p>
+      <p>NAT GW is assigned an <strong>Elastic IP</strong> (static public IP). When private instances send traffic through NAT GW, it uses this EIP as the source. The IGW then forwards that traffic to the internet.</p>
+      <p><strong>Traffic flow:</strong> Private EC2 → Route table (0.0.0.0/0 → NAT GW) → NAT GW → Public subnet route table (0.0.0.0/0 → IGW) → IGW → Internet</p>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="aws">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">20</span>
+      <span class="q-text">What is VPC and how does routing work?</span>
+      <span class="q-tag tag-easy">easy</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p><strong>VPC (Virtual Private Cloud)</strong> = logically isolated network in AWS. Define your own CIDR block (e.g., <code>10.0.0.0/16</code>). Contains subnets across AZs.</p>
+      <p><strong>How routing works:</strong></p>
+      <ul>
+        <li>Each subnet is associated with exactly <strong>one route table</strong></li>
+        <li>Route table has ordered rules: destination CIDR → target</li>
+        <li>Local route (<code>10.0.0.0/16 → local</code>) always present — covers intra-VPC traffic</li>
+        <li>For internet: add <code>0.0.0.0/0 → IGW</code> (public) or <code>0.0.0.0/0 → NAT GW</code> (private)</li>
+        <li>Most specific route wins (longest prefix match)</li>
+      </ul>
+      <div class="highlight-box">In ApnaKart Terraform: created separate route tables for public (→IGW) and private (→NAT GW) subnets. This was part of the VPC module.</div>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="aws">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">21</span>
+      <span class="q-text">Difference between Security Groups and NACLs?</span>
+      <span class="q-tag tag-med">medium</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p><strong>Security Groups (SG)</strong>:</p>
+      <ul>
+        <li><strong>Stateful</strong> — return traffic automatically allowed</li>
+        <li>Applied to <strong>instances/ENIs</strong> (resource level)</li>
+        <li><strong>Allow rules only</strong> — no deny rules</li>
+        <li>All rules evaluated together (no order)</li>
+      </ul>
+      <p><strong>Network ACLs (NACL)</strong>:</p>
+      <ul>
+        <li><strong>Stateless</strong> — must explicitly allow both inbound AND outbound return traffic</li>
+        <li>Applied at <strong>subnet boundary</strong></li>
+        <li><strong>Allow and Deny rules</strong> — evaluated in order (lowest rule number first)</li>
+        <li>First matching rule wins — rule 100 ALLOW overrides rule 200 DENY</li>
+      </ul>
+      <p><strong>Evaluation order:</strong> NACL checked first (at subnet boundary), then SG (at instance level). Both must allow traffic for it to pass.</p>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="aws">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">22</span>
+      <span class="q-text">What happens if route table is misconfigured?</span>
+      <span class="q-tag tag-med">medium</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p>Common misconfiguration scenarios:</p>
+      <ul>
+        <li><strong>Missing 0.0.0.0/0 → IGW</strong> in public subnet: Public EC2 can't reach internet, ALB can't receive external traffic</li>
+        <li><strong>Missing 0.0.0.0/0 → NAT GW</strong> in private subnet: Private EC2 can't reach internet (can't pull images, packages)</li>
+        <li><strong>NAT GW in wrong subnet</strong>: NAT GW placed in a private subnet — it has no internet access itself, so all outbound traffic fails</li>
+        <li><strong>Wrong subnet association</strong>: Private subnet accidentally uses public route table → security risk; resources get direct internet exposure</li>
+        <li><strong>VPC Peering missing return route</strong>: One-way connectivity, connection timeouts</li>
+      </ul>
+      <p><strong>Debug:</strong> <code>VPC → Route Tables → Check routes and subnet associations</code>. Use VPC Reachability Analyzer for automated path verification.</p>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="aws">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">23</span>
+      <span class="q-text">How does traffic flow from private subnet to internet?</span>
+      <span class="q-tag tag-easy">easy</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p>Full path with each component:</p>
+      <pre>Private EC2 (10.0.2.5)
+  → Private subnet route table: 0.0.0.0/0 → nat-xxxxx
+  → NAT Gateway (in public subnet, EIP: 54.x.x.x)
+  → Public subnet route table: 0.0.0.0/0 → igw-xxxxx
+  → Internet Gateway
+  → Internet (src IP appears as NAT GW's EIP)</pre>
+      <p>Return path is the reverse — but because NAT is stateful, it knows to send return traffic back to the originating private IP.</p>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SECTION: SCENARIO-BASED -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" data-section="scenario">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-icon">🔥</span>
+    <span class="section-title">Scenario-Based</span>
+    <span class="section-count">7 Q</span>
+    <span class="section-toggle open">▶</span>
+  </div>
+  <div class="section-body">
+
+  <div class="qa-card" data-section="scenario">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">24</span>
+      <span class="q-text">Your pod is in CrashLoopBackOff — complete debug walkthrough</span>
+      <span class="q-tag tag-hard">hard</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="scenario-flow">
+        <div class="flow-step"><span class="step-num">1</span><span><code>kubectl describe pod &lt;pod&gt; -n &lt;ns&gt;</code> → Last State exit code + Events section</span></div>
+        <div class="flow-step"><span class="step-num">2</span><span><code>kubectl logs &lt;pod&gt; --previous</code> → application error in last run</span></div>
+        <div class="flow-step"><span class="step-num">3</span><span>Interpret exit code: <strong>137</strong>=OOMKilled, <strong>1</strong>=app error/exception, <strong>139</strong>=segfault, <strong>0</strong>=liveness probe killing healthy process</span></div>
+        <div class="flow-step"><span class="step-num">4</span><span>Verify secrets/configmaps: <code>kubectl get secret &lt;name&gt; -o yaml</code>, check if DB credentials are correct</span></div>
+        <div class="flow-step"><span class="step-num">5</span><span>Check liveness probe: is <code>initialDelaySeconds</code> long enough for app startup?</span></div>
+        <div class="flow-step"><span class="step-num">6</span><span>Check dependencies: can pod reach database? <code>kubectl exec &lt;pod&gt; -- nc -zv &lt;db-host&gt; 5432</code></span></div>
+        <div class="flow-step"><span class="step-num">7</span><span>If image issue: <code>kubectl run test --image=&lt;same-img&gt; -- sleep 3600</code> then exec in to inspect</span></div>
+      </div>
+      <div class="highlight-box">Answer structure for interview: "I start with describe and logs, identify the exit code, then work backwards — env/config issues first, then resource limits, then probe misconfiguration."</div>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="scenario">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">25</span>
+      <span class="q-text">Pods are getting evicted frequently — what will you check?</span>
+      <span class="q-tag tag-hard">hard</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="scenario-flow">
+        <div class="flow-step"><span class="step-num">1</span><span><code>kubectl get events -A --field-selector reason=Evicted</code> → which pods, which nodes</span></div>
+        <div class="flow-step"><span class="step-num">2</span><span><code>kubectl top nodes</code> → are nodes under memory/CPU pressure?</span></div>
+        <div class="flow-step"><span class="step-num">3</span><span><code>kubectl describe node &lt;node&gt;</code> → check <strong>Conditions</strong> section for MemoryPressure, DiskPressure, PIDPressure</span></div>
+        <div class="flow-step"><span class="step-num">4</span><span>Identify pods without resource requests: <code>kubectl get pods -o json | jq '.items[] | select(.spec.containers[].resources.requests == null)'</code></span></div>
+        <div class="flow-step"><span class="step-num">5</span><span>Check if disk is full: <code>df -h</code> on nodes — old container images/logs filling disk</span></div>
+        <div class="flow-step"><span class="step-num">6</span><span>Fix: Add requests/limits to all pods. Consider LimitRange to enforce defaults. Scale out nodes if needed.</span></div>
+        <div class="flow-step"><span class="step-num">7</span><span>Add PodDisruptionBudgets to prevent cascading evictions during maintenance</span></div>
+      </div>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="scenario">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">26</span>
+      <span class="q-text">Application is slow intermittently — how do you troubleshoot?</span>
+      <span class="q-tag tag-hard">hard</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="scenario-flow">
+        <div class="flow-step"><span class="step-num">1</span><span><strong>Datadog APM</strong>: trace slow requests, identify which service/span is the bottleneck. In ApnaKart this was the first tool.</span></div>
+        <div class="flow-step"><span class="step-num">2</span><span><code>kubectl top pods</code> → CPU throttling? Check <code>container_cpu_throttled_seconds_total</code> in Prometheus</span></div>
+        <div class="flow-step"><span class="step-num">3</span><span>Check GC pauses: for JVM apps, add <code>-XX:+PrintGCDetails</code> or use JVM metrics in Datadog</span></div>
+        <div class="flow-step"><span class="step-num">4</span><span>Check DB: slow query log, connection pool exhaustion (<code>HikariCP</code> metrics)</span></div>
+        <div class="flow-step"><span class="step-num">5</span><span>Check DNS latency: <code>ndots:5</code> default means 5 DNS lookups per hostname — reduce to <code>ndots:2</code></span></div>
+        <div class="flow-step"><span class="step-num">6</span><span>Check cross-AZ traffic: services in different AZs add ~1-3ms per hop. Use topology-aware routing.</span></div>
+        <div class="flow-step"><span class="step-num">7</span><span>Check HPA flapping: pods being added/removed causing brief connection drops</span></div>
+      </div>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="scenario">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">27</span>
+      <span class="q-text">DNS resolution is failing in cluster — full debug steps</span>
+      <span class="q-tag tag-hard">hard</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="scenario-flow">
+        <div class="flow-step"><span class="step-num">1</span><span><code>kubectl get pods -n kube-system | grep coredns</code> — Running? Restarting?</span></div>
+        <div class="flow-step"><span class="step-num">2</span><span><code>kubectl logs -n kube-system &lt;coredns-pod&gt;</code> — SERVFAIL? Upstream timeout?</span></div>
+        <div class="flow-step"><span class="step-num">3</span><span>Test from pod: <code>kubectl run test --image=busybox:1.28 --rm -it -- nslookup kubernetes.default</code></span></div>
+        <div class="flow-step"><span class="step-num">4</span><span>Check <code>/etc/resolv.conf</code> inside pod — is nameserver pointing to CoreDNS ClusterIP?</span></div>
+        <div class="flow-step"><span class="step-num">5</span><span>Check NetworkPolicy: is UDP/TCP port 53 allowed to <code>kube-system</code> namespace?</span></div>
+        <div class="flow-step"><span class="step-num">6</span><span>Check CoreDNS ConfigMap: <code>kubectl get cm coredns -n kube-system -o yaml</code> — misconfig?</span></div>
+        <div class="flow-step"><span class="step-num">7</span><span>If CoreDNS OOMKilled: increase its memory limit or scale its replicas</span></div>
+      </div>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="scenario">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">28</span>
+      <span class="q-text">Private EC2 cannot access internet — what could be wrong?</span>
+      <span class="q-tag tag-med">medium</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p>Check in this order (most common first):</p>
+      <div class="scenario-flow">
+        <div class="flow-step"><span class="step-num">1</span><span>Private subnet route table: does it have <code>0.0.0.0/0 → nat-xxxxx</code>? Most common miss.</span></div>
+        <div class="flow-step"><span class="step-num">2</span><span>Is NAT GW in a <strong>public subnet</strong>? Not a private subnet. Check its subnet assignment.</span></div>
+        <div class="flow-step"><span class="step-num">3</span><span>NAT GW status: is it "available"? Not "pending" or "failed"?</span></div>
+        <div class="flow-step"><span class="step-num">4</span><span>Public subnet route table: does it have <code>0.0.0.0/0 → igw-xxxxx</code>?</span></div>
+        <div class="flow-step"><span class="step-num">5</span><span>Security Group on EC2: does outbound rule allow the traffic (port 443, 80)?</span></div>
+        <div class="flow-step"><span class="step-num">6</span><span>NACL on private subnet: stateless — both outbound rule AND inbound return (ephemeral ports 1024-65535) must be allowed</span></div>
+        <div class="flow-step"><span class="step-num">7</span><span>VPC DNS: is <code>enableDnsResolution</code> enabled? (<code>dig google.com</code> vs <code>ping 8.8.8.8</code> to isolate DNS vs routing)</span></div>
+      </div>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="scenario">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">29</span>
+      <span class="q-text">Pod is running but not accessible — what will you check?</span>
+      <span class="q-tag tag-hard">hard</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="scenario-flow">
+        <div class="flow-step"><span class="step-num">1</span><span>Is pod <strong>Ready</strong>? <code>kubectl get pod</code> — if 0/1, readiness probe is failing</span></div>
+        <div class="flow-step"><span class="step-num">2</span><span><code>kubectl describe pod</code> → check readiness probe failure reason</span></div>
+        <div class="flow-step"><span class="step-num">3</span><span>Is pod in Service endpoints? <code>kubectl get endpoints &lt;svc&gt;</code> — if empty, service has no backends</span></div>
+        <div class="flow-step"><span class="step-num">4</span><span>Service selector check: <code>kubectl get svc &lt;svc&gt; -o yaml</code> → does <code>selector</code> match pod labels? <code>kubectl get pod --show-labels</code></span></div>
+        <div class="flow-step"><span class="step-num">5</span><span>Port mismatch: Service <code>targetPort</code> must match container's <code>containerPort</code></span></div>
+        <div class="flow-step"><span class="step-num">6</span><span>NetworkPolicy blocking: <code>kubectl get networkpolicy -n &lt;ns&gt;</code></span></div>
+        <div class="flow-step"><span class="step-num">7</span><span>Test directly: <code>kubectl exec &lt;another-pod&gt; -- curl &lt;pod-ip&gt;:&lt;port&gt;</code> bypasses service layer</span></div>
+      </div>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="scenario">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">30</span>
+      <span class="q-text">High latency between services — how do you debug?</span>
+      <span class="q-tag tag-hard">hard</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="scenario-flow">
+        <div class="flow-step"><span class="step-num">1</span><span><strong>Datadog APM service map</strong>: identify which service-to-service hop is slow. This is your starting point.</span></div>
+        <div class="flow-step"><span class="step-num">2</span><span>CPU throttling? <code>kubectl top pods</code> + check <code>container_cpu_throttled_seconds_total</code> in Prometheus/Datadog</span></div>
+        <div class="flow-step"><span class="step-num">3</span><span>DNS overhead: default <code>ndots:5</code> causes 5 failed DNS lookups before resolving. Reduce to <code>ndots:2</code> in pod spec.</span></div>
+        <div class="flow-step"><span class="step-num">4</span><span>Cross-AZ: services in different availability zones add ~1-3ms. Check pod scheduling across zones.</span></div>
+        <div class="flow-step"><span class="step-num">5</span><span>DB connection pool: <code>HikariCP maxPoolSize</code> too low? Requests queuing for connection?</span></div>
+        <div class="flow-step"><span class="step-num">6</span><span>kube-proxy iptables: thousands of rules add microsecond overhead. Consider IPVS mode for large clusters.</span></div>
+        <div class="flow-step"><span class="step-num">7</span><span>MTU mismatch: fragmentation causes retransmits. Check with <code>ping -s 8972 -M do &lt;dest&gt;</code></span></div>
+      </div>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SECTION: RESOURCES & PERFORMANCE -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" data-section="core">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-icon">⚙</span>
+    <span class="section-title">Resources & Performance</span>
+    <span class="section-count">5 Q</span>
+    <span class="section-toggle open">▶</span>
+  </div>
+  <div class="section-body">
+
+  <div class="qa-card" data-section="core">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">31</span>
+      <span class="q-text">What are requests and limits?</span>
+      <span class="q-tag tag-easy">easy</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p><strong>Requests</strong> = minimum guaranteed resources. Used by the scheduler to decide if a node has enough capacity to place the pod. Node must have this much available. Container is guaranteed this amount.</p>
+      <p><strong>Limits</strong> = maximum allowed. If a container exceeds its <strong>memory limit</strong> → OOMKilled (immediate termination). If it exceeds its <strong>CPU limit</strong> → throttled (slowed, not killed).</p>
+      <p>CPU is measured in millicores: <code>250m</code> = 0.25 CPU core. Memory in Mi/Gi.</p>
+      <div class="highlight-box">In ApnaKart: all 10 microservices had requests and limits explicitly set in Kustomize overlays, different per environment (dev had lower limits, prod had higher). This contributed to zero unexpected evictions in production.</div>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="core">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">32</span>
+      <span class="q-text">What happens if limits are not defined?</span>
+      <span class="q-tag tag-med">medium</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p>Pod gets <strong>BestEffort QoS</strong> — first to be evicted under pressure. Extremely dangerous in production.</p>
+      <p>Container can consume <strong>all available node resources</strong>, starving other pods on the same node. One memory leak can bring down multiple services.</p>
+      <p><strong>For CPU only (no memory limit)</strong>: Pod is Burstable QoS. Can use all spare CPU but gets throttled when competing. Memory remains unbounded — still risky.</p>
+      <p><strong>Best practice</strong>: Always set both requests and limits. Use <code>LimitRange</code> in each namespace to enforce defaults and maximums automatically.</p>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="core">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">33</span>
+      <span class="q-text">What causes OOMKilled and how to prevent memory issues?</span>
+      <span class="q-tag tag-med">medium</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p><strong>Causes:</strong></p>
+      <ul>
+        <li>Memory leak — objects accumulate in heap, GC can't free them</li>
+        <li>Memory limit set too low for the actual workload</li>
+        <li>JVM heap (<code>-Xmx</code>) exceeds container memory limit — JVM doesn't respect cgroup limits by default (pre-Java 11)</li>
+        <li>Sudden traffic spike causing heap growth beyond limit</li>
+        <li>Unbounded caches (no eviction policy)</li>
+      </ul>
+      <p><strong>Prevention:</strong></p>
+      <ul>
+        <li>Set <code>-Xmx</code> to ~75% of container memory limit (leave headroom for non-heap)</li>
+        <li>Java 11+: use <code>-XX:+UseContainerSupport</code> — JVM auto-detects cgroup limits</li>
+        <li>Monitor with Datadog/Prometheus: alert at >80% memory usage</li>
+        <li>Load test to find realistic baseline before setting limits</li>
+        <li>Implement cache eviction (LRU, TTL-based)</li>
+      </ul>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="core">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">34</span>
+      <span class="q-text">How do you monitor resource usage?</span>
+      <span class="q-tag tag-easy">easy</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p><strong>kubectl level:</strong> <code>kubectl top pods</code>, <code>kubectl top nodes</code> (requires metrics-server)</p>
+      <p><strong>Prometheus + Grafana:</strong> Scrapes kubelet/cAdvisor metrics. Key metrics: <code>container_memory_usage_bytes</code>, <code>container_cpu_usage_seconds_total</code>, <code>container_cpu_throttled_seconds_total</code></p>
+      <div class="highlight-box">In ApnaKart: used Datadog APM as DaemonSet for container-level resource metrics, infrastructure metrics, and distributed traces. Set alerts on memory usage >80% and CPU throttle rate >20%.</div>
+      <p><strong>VPA (Vertical Pod Autoscaler):</strong> In recommendation mode, analyzes actual usage and suggests right-sized requests/limits. Non-disruptive way to right-size.</p>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="core">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">35</span>
+      <span class="q-text">What is HPA and how does autoscaling work?</span>
+      <span class="q-tag tag-med">medium</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p><strong>HPA (Horizontal Pod Autoscaler)</strong> scales pods in/out based on observed metrics.</p>
+      <p><strong>Internals:</strong></p>
+      <ul>
+        <li>Metrics Server scrapes pod metrics every 15s from kubelet</li>
+        <li>HPA controller checks metrics every 30s (default)</li>
+        <li>Formula: <code>desiredReplicas = ceil(currentReplicas × (currentMetric / targetMetric))</code></li>
+        <li>Scale-up: immediate (no delay)</li>
+        <li>Scale-down: 5min stabilization window (prevents flapping)</li>
+        <li>Respects <code>minReplicas</code> and <code>maxReplicas</code> bounds</li>
+      </ul>
+      <div class="highlight-box">In ApnaKart: HPA configured on all microservices targeting 70% CPU. Scaled from 2 to 10 replicas. Combined with ALB's health checks for zero-downtime scaling. This contributed to 99.9% availability under load.</div>
+      <pre>kubectl get hpa -n production
+kubectl describe hpa &lt;name&gt;  # shows current/target metrics</pre>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SECTION: CI/CD -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" data-section="cicd">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-icon">🔁</span>
+    <span class="section-title">CI/CD & DevOps</span>
+    <span class="section-count">5 Q</span>
+    <span class="section-toggle open">▶</span>
+  </div>
+  <div class="section-body">
+
+  <div class="qa-card" data-section="cicd">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">36</span>
+      <span class="q-text">How do you design a CI/CD pipeline? (Walk through yours)</span>
+      <span class="q-tag tag-hard">hard</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p><strong>ApnaKart Jenkins Pipeline stages:</strong></p>
+      <pre>Code Push (GitHub)
+  → Webhook triggers Jenkins
+  → Checkout + Maven build (multi-module Spring Boot)
+  → Unit tests (JUnit) + code coverage
+  → SonarQube scan → Quality Gate check (fail if not met)
+  → Multi-stage Docker build (builder → runtime, ~120MB final)
+  → Trivy scan → block if critical CVEs found
+  → Push to registry:
+      dev/test branches → DockerHub
+      uat/prod branches → ECR (IRSA auth, no keys)
+  → Deploy via Kustomize overlay (dev/test/uat/prod namespaces)
+  → kubectl rollout status (wait for success)
+  → Slack notification (success/fail)</pre>
+      <p><strong>Result:</strong> 77% pipeline time reduction vs previous manual process. 98% deployment success rate. Zero critical CVEs in production.</p>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="cicd">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">37</span>
+      <span class="q-text">What is blue-green deployment?</span>
+      <span class="q-tag tag-easy">easy</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p>Two identical production environments: <strong>Blue</strong> (current live) and <strong>Green</strong> (new version).</p>
+      <p>Deploy new version to Green while Blue keeps serving traffic. Run smoke tests on Green. When ready: switch traffic (LB/DNS/Service selector change) to Green. Blue stays as instant rollback.</p>
+      <p><strong>Pros:</strong> Zero downtime, instant rollback, easy testing in production-like environment.</p>
+      <p><strong>Cons:</strong> Double infrastructure cost during deployment. DB schema changes are tricky (must be backward compatible).</p>
+      <p><strong>In Kubernetes:</strong> Two Deployments (blue/green), one Service. Change Service <code>selector</code> label from <code>version: blue</code> to <code>version: green</code> to switch traffic.</p>
+      <pre>kubectl patch service myapp -p '{"spec":{"selector":{"version":"green"}}}'</pre>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="cicd">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">38</span>
+      <span class="q-text">What is rolling update in Kubernetes?</span>
+      <span class="q-tag tag-easy">easy</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p>Default Deployment update strategy. Gradually replaces old pods with new ones — never takes all pods down at once.</p>
+      <p>Controlled by two parameters:</p>
+      <ul>
+        <li><code>maxSurge</code>: how many extra pods can exist above desired count (e.g., 25% = can temporarily have 5 pods for a 4-replica deployment)</li>
+        <li><code>maxUnavailable</code>: how many pods can be unavailable during update (e.g., 25% = up to 1 pod can be down)</li>
+      </ul>
+      <p><strong>Zero-downtime requires:</strong> readiness probes correctly configured. If new pod fails readiness, rolling update pauses. Old pods keep serving.</p>
+      <pre>kubectl rollout status deployment/myapp -n production
+kubectl rollout history deployment/myapp</pre>
+      <div class="highlight-box">In ApnaKart: maxSurge=1, maxUnavailable=0 for prod — always had full capacity during update. Readiness probes ensured traffic only went to healthy pods.</div>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="cicd">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">39</span>
+      <span class="q-text">How do you rollback a failed deployment?</span>
+      <span class="q-tag tag-med">medium</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p><strong>Kubernetes native:</strong></p>
+      <pre>kubectl rollout undo deployment/&lt;name&gt; -n &lt;ns&gt;
+kubectl rollout undo deployment/&lt;name&gt; --to-revision=&lt;N&gt;
+kubectl rollout history deployment/&lt;name&gt;         # see revisions</pre>
+      <p><strong>In Jenkins pipeline:</strong> Trigger the previous successful build. Or add a <code>ROLLBACK</code> parameter that deploys the last known-good image tag.</p>
+      <p><strong>GitOps approach:</strong> Revert the commit that changed the image tag/config in Git → ArgoCD/Flux automatically deploys the previous state.</p>
+      <p><strong>After rollback:</strong> Always check the logs, metrics, and conduct a post-mortem before the next deploy attempt. Fix the root cause — not just the rollback.</p>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="cicd">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">40</span>
+      <span class="q-text">How do you integrate SonarQube in a pipeline?</span>
+      <span class="q-tag tag-med">medium</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p><strong>Jenkins Jenkinsfile integration:</strong></p>
+      <pre>stage('SonarQube Analysis') {
+  steps {
+    withSonarQubeEnv('sonarqube-server') {
+      sh 'mvn sonar:sonar \
+        -Dsonar.projectKey=apnakart-order-service \
+        -Dsonar.host.url=http://sonarqube:9000 \
+        -Dsonar.login=${SONAR_TOKEN}'
+    }
+  }
+}
+
+stage('Quality Gate') {
+  steps {
+    timeout(time: 5, unit: 'MINUTES') {
+      waitForQualityGate abortPipeline: true  // fails build if gate fails
+    }
+  }
+}</pre>
+      <p><strong>Quality Gate checks:</strong> code coverage ≥80%, no new critical bugs, no new security hotspots, duplication <3%.</p>
+      <div class="highlight-box">In ApnaKart: SonarQube integrated in Jenkins. Pipeline aborted on Quality Gate failure. This caught code quality issues before they reached production.</div>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SECTION: PRO LEVEL -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" data-section="pro">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-icon">🧠</span>
+    <span class="section-title">Pro-Level / Deep Internals</span>
+    <span class="section-count">5 Q</span>
+    <span class="section-toggle open">▶</span>
+  </div>
+  <div class="section-body">
+
+  <div class="qa-card" data-section="pro">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">41</span>
+      <span class="q-text">How does the Kubernetes scheduler work internally?</span>
+      <span class="q-tag tag-hard">hard</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p>Two-phase process:</p>
+      <p><strong>Phase 1 — Filtering (Predicates):</strong> Eliminate nodes that can't run the pod.</p>
+      <ul>
+        <li>Insufficient CPU/memory requests</li>
+        <li>Taint/toleration mismatch</li>
+        <li>NodeSelector / nodeAffinity constraints</li>
+        <li>Volume zone requirements</li>
+        <li>Port conflicts</li>
+      </ul>
+      <p><strong>Phase 2 — Scoring (Priorities):</strong> Rank feasible nodes. Key scoring functions:</p>
+      <ul>
+        <li><code>LeastRequestedPriority</code>: prefer less-loaded nodes (spread)</li>
+        <li><code>ImageLocalityPriority</code>: prefer nodes that already have the container image</li>
+        <li><code>InterPodAffinityPriority</code>: prefer nodes where preferred pods are co-located</li>
+      </ul>
+      <p><strong>Binding:</strong> Scheduler writes <code>nodeName</code> to the pod spec via API server. Kubelet on that node picks it up via watch.</p>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="pro">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">42</span>
+      <span class="q-text">What happens inside kubelet when a pod is created?</span>
+      <span class="q-tag tag-hard">hard</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="scenario-flow">
+        <div class="flow-step"><span class="step-num">1</span><span>kubelet watches API server for pods assigned to its node (<code>spec.nodeName == thisNode</code>)</span></div>
+        <div class="flow-step"><span class="step-num">2</span><span>Calls <strong>CRI</strong> (containerd/CRI-O) to pull container images</span></div>
+        <div class="flow-step"><span class="step-num">3</span><span>Calls <strong>CNI plugin</strong> to create network namespace and assign pod IP, set up veth pair</span></div>
+        <div class="flow-step"><span class="step-num">4</span><span>Mounts volumes: ConfigMaps, Secrets (projected volumes), PersistentVolumeClaims via CSI</span></div>
+        <div class="flow-step"><span class="step-num">5</span><span>Starts <strong>init containers</strong> in order — waits for each to complete successfully before next</span></div>
+        <div class="flow-step"><span class="step-num">6</span><span>Starts <strong>application containers</strong> in parallel (unless dependencies defined)</span></div>
+        <div class="flow-step"><span class="step-num">7</span><span>Starts <strong>liveness/readiness/startup probes</strong> as goroutines</span></div>
+        <div class="flow-step"><span class="step-num">8</span><span>Reports pod status (Running, container states) back to API server via status update</span></div>
+      </div>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="pro">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">43</span>
+      <span class="q-text">How does service routing work at iptables level?</span>
+      <span class="q-tag tag-hard">hard</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p>kube-proxy watches Services and Endpoints objects. For each Service, it creates iptables rules in the <code>PREROUTING</code> and <code>OUTPUT</code> chains.</p>
+      <p><strong>Packet flow for ClusterIP → Pod:</strong></p>
+      <pre>Packet arrives with dst: 10.100.0.5:80 (ClusterIP)
+  → PREROUTING chain → KUBE-SERVICES chain
+  → Match: dst 10.100.0.5:80 → jump to KUBE-SVC-xxxxx
+  → KUBE-SVC-xxxxx: randomly pick one of N endpoints (statistic --probability)
+  → KUBE-SEP-yyy1: DNAT dst to 10.0.1.4:8080 (pod IP)
+  → Packet forwarded to pod
+  → Return packet: conntrack table reverses DNAT automatically</pre>
+      <p><strong>IPVS mode (alternative):</strong> Uses kernel hash tables instead of linear iptables chains. O(1) lookup vs O(n). Recommended for clusters with >1000 services.</p>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="pro">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">44</span>
+      <span class="q-text">What happens when a node goes NotReady?</span>
+      <span class="q-tag tag-hard">hard</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="scenario-flow">
+        <div class="flow-step"><span class="step-num">1</span><span>Kubelet sends heartbeats to API server every 10s. node-monitor-grace-period = 40s. After 40s silence → node marked <strong>Unknown/NotReady</strong></span></div>
+        <div class="flow-step"><span class="step-num">2</span><span>Node controller adds taint: <code>node.kubernetes.io/not-ready:NoExecute</code> and <code>node.kubernetes.io/unreachable:NoExecute</code></span></div>
+        <div class="flow-step"><span class="step-num">3</span><span>Pods with no toleration for this taint: evicted after <code>tolerationSeconds</code> (default: 300s = 5min)</span></div>
+        <div class="flow-step"><span class="step-num">4</span><span>DaemonSet pods: tolerate NotReady by default — they stay (or are recreated on recovery)</span></div>
+        <div class="flow-step"><span class="step-num">5</span><span>Deployment pods: rescheduled on healthy nodes after 5min</span></div>
+      </div>
+      <p><strong>Debug:</strong></p>
+      <pre>kubectl describe node &lt;node&gt;   # check Conditions section
+ssh &lt;node&gt; && journalctl -u kubelet -n 100  # kubelet logs</pre>
+      <p><strong>Common causes:</strong> OOM on node, disk full, network partition, kubelet process died, Docker/containerd crashed.</p>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="pro">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">45</span>
+      <span class="q-text">Kubernetes control plane components — what does each do?</span>
+      <span class="q-tag tag-med">medium</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p><strong>API Server (kube-apiserver):</strong> Single entry point for all K8s operations. Validates and processes REST requests. All components communicate through it — nothing talks directly.</p>
+      <p><strong>etcd:</strong> Distributed key-value store. Single source of truth for all cluster state. Highly available (3 or 5 node raft consensus). Everything in K8s is an object stored in etcd.</p>
+      <p><strong>Scheduler (kube-scheduler):</strong> Watches for unscheduled pods. Selects best node via filter + score. Writes <code>nodeName</code> to pod spec.</p>
+      <p><strong>Controller Manager:</strong> Runs all controllers as goroutines: ReplicaSet controller, Deployment controller, Node controller, Job controller, etc. Each reconciles actual state → desired state.</p>
+      <p><strong>Cloud Controller Manager:</strong> On EKS: handles AWS-specific operations — LoadBalancer provisioning, node cloud labels, route management.</p>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SECTION: RAPID FIRE -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" data-section="rapid">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-icon">⚡</span>
+    <span class="section-title">Rapid-Fire</span>
+    <span class="section-count">5 Q</span>
+    <span class="section-toggle open">▶</span>
+  </div>
+  <div class="section-body">
+
+  <div class="qa-card" data-section="rapid">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">46</span>
+      <span class="q-text">What is Exit Code 137?</span>
+      <span class="q-tag tag-fire">rapid</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p><strong>Exit 137 = 128 + 9 = OOMKilled.</strong> Signal 9 = SIGKILL. Container was killed by the Linux OOM killer because it exceeded its memory limit.</p>
+      <p>Always check: <code>kubectl describe pod</code> → <code>Last State: OOMKilled</code>. Fix: increase memory limit or fix memory leak.</p>
+      <p>Other useful exit codes: <code>1</code> = general error, <code>126</code> = command not executable, <code>127</code> = command not found, <code>139</code> = segfault (SIGSEGV), <code>143</code> = graceful SIGTERM</p>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="rapid">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">47</span>
+      <span class="q-text">What is the default DNS policy in Kubernetes?</span>
+      <span class="q-tag tag-fire">rapid</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p><strong><code>ClusterFirst</code></strong> — cluster DNS (CoreDNS) is tried first. If hostname matches cluster domain suffix, it's resolved by CoreDNS. Otherwise, forwarded to upstream DNS (node's configured nameserver).</p>
+      <p>Other options: <code>Default</code> (use node's DNS, no cluster DNS), <code>None</code> (custom DNS via dnsConfig), <code>ClusterFirstWithHostNet</code> (for hostNetwork pods).</p>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="rapid">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">48</span>
+      <span class="q-text">Can a pod move to another node automatically?</span>
+      <span class="q-tag tag-fire">rapid</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p><strong>No</strong> — pods are not migrated. A pod is permanently bound to a node once scheduled.</p>
+      <p>What actually happens: the pod is <strong>deleted</strong> (eviction, node failure, etc.) and the Deployment/ReplicaSet controller creates a <strong>new pod</strong>. The new pod goes through scheduling again and may land on a different node. Different pod UID, different IP.</p>
+      <p>This is why stateless apps work well in K8s — any pod can be killed and recreated. StatefulSets use PVCs with <code>ReadWriteOnce</code> to persist data across pod recreations.</p>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="rapid">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">49</span>
+      <span class="q-text">Difference between pod restart and pod recreation?</span>
+      <span class="q-tag tag-fire">rapid</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p><strong>Restart</strong> = same pod object, container inside is killed and restarted by kubelet. Same pod IP, same node, same pod UID. <code>restartCount</code> increments. Happens on: liveness probe failure, OOMKill, app crash.</p>
+      <p><strong>Recreation</strong> = pod object is deleted, new pod object is created by the controller (Deployment, ReplicaSet). New pod UID, potentially new node, new IP. Happens on: pod eviction, node failure, manual deletion, rolling update.</p>
+      <p>Check with: <code>kubectl get pod &lt;name&gt; -o yaml | grep uid</code> — if UID changes, it was recreated.</p>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  <div class="qa-card" data-section="rapid">
+    <div class="qa-q" onclick="toggleQ(this)">
+      <span class="q-num">50</span>
+      <span class="q-text">What is the role of kube-proxy?</span>
+      <span class="q-tag tag-fire">rapid</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-a">
+      <p>kube-proxy runs on every node. It watches the API server for Service and Endpoint changes. When a new Service is created, kube-proxy programs the node's kernel (iptables or IPVS) to implement service routing.</p>
+      <p><strong>Critical misconception:</strong> kube-proxy does NOT proxy actual network traffic. It only sets up kernel-level rules. The packet goes kernel → iptables → pod directly. kube-proxy is a rule installer, not a traffic forwarder.</p>
+      <p><strong>Modes:</strong> iptables (default), IPVS (better for scale), userspace (legacy, avoid).</p>
+      <pre>kubectl get pods -n kube-system | grep kube-proxy  # one per node
+kubectl logs -n kube-system &lt;kube-proxy-pod&gt;</pre>
+      <button class="done-btn" onclick="markDone(this)">Mark reviewed ✓</button>
+    </div>
+  </div>
+
+  </div>
+</div>
+
+<div class="no-results" id="no-results" style="display:none">No questions match your search.</div>
+
+</div><!-- /.main -->
+
+<script>
+let totalQ = 0;
+let doneQ = 0;
+
+function toggleQ(el) {
+  const card = el.closest('.qa-card');
+  const ans = card.querySelector('.qa-a');
+  const arrow = el.querySelector('.q-arrow');
+  const isOpen = ans.classList.contains('open');
+  ans.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+}
+
+function toggleSection(header) {
+  const body = header.nextElementSibling;
+  const toggle = header.querySelector('.section-toggle');
+  const isHidden = body.style.display === 'none';
+  body.style.display = isHidden ? '' : 'none';
+  toggle.classList.toggle('open', isHidden);
+}
+
+function markDone(btn) {
+  const card = btn.closest('.qa-card');
+  const isDone = card.classList.contains('done');
+  card.classList.toggle('done', !isDone);
+  doneQ = document.querySelectorAll('.qa-card.done:not(.hidden)').length;
+  updateProgress();
+}
+
+function updateProgress() {
+  const cards = document.querySelectorAll('.qa-card:not(.hidden)');
+  totalQ = cards.length;
+  doneQ = document.querySelectorAll('.qa-card.done:not(.hidden)').length;
+  const pct = totalQ > 0 ? Math.round((doneQ / totalQ) * 100) : 0;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = doneQ + ' / ' + totalQ + ' questions reviewed (' + pct + '%)';
+  document.getElementById('done-count').textContent = doneQ;
+}
+
+let currentSection = 'all';
+
+function filterSection(section, btn) {
+  currentSection = section;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterAll();
+}
+
+function filterAll() {
+  const query = document.getElementById('search-input').value.toLowerCase();
+  let anyVisible = false;
+
+  document.querySelectorAll('.qa-card').forEach(card => {
+    const sec = card.getAttribute('data-section');
+    const qText = card.querySelector('.q-text').textContent.toLowerCase();
+    const ansText = card.querySelector('.qa-a').textContent.toLowerCase();
+    
+    const sectionMatch = currentSection === 'all' || sec === currentSection;
+    const searchMatch = !query || qText.includes(query) || ansText.includes(query);
+    
+    const visible = sectionMatch && searchMatch;
+    card.classList.toggle('hidden', !visible);
+    if (visible) anyVisible = true;
+  });
+
+  document.querySelectorAll('.section').forEach(sec => {
+    const secName = sec.getAttribute('data-section');
+    const hasVisible = sec.querySelectorAll('.qa-card:not(.hidden)').length > 0;
+    sec.style.display = hasVisible ? '' : 'none';
+  });
+
+  document.getElementById('no-results').style.display = anyVisible ? 'none' : 'block';
+  updateProgress();
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', () => updateProgress());
+updateProgress();
+</script>
+</body>
+</html>
