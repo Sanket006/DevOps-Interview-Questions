@@ -1,6 +1,6 @@
 # 📖 PDF Learning Resources
 
-> A curated collection of **37 reference PDFs** covering DevOps interview preparation, company-specific guides, tool-specific Q&A, and extended learning material.
+> A curated collection of **50 reference resources** covering DevOps interview preparation, company-specific guides, tool-specific Q&A, and extended learning material.
 
 ---
 
@@ -35,11 +35,12 @@ These PDFs complement the Markdown Q&A files in this repository with additional 
 
 | File | Description |
 |---|---|
-| `DevOps_Interview_QA_1.pdf` through `DevOps_Interview_QA_7.pdf` | Extended Q&A banks (7 volumes) |
+| `DevOps_Interview_QA_1.pdf` through `DevOps_Interview_QA_8.pdf` | Extended Q&A banks (8 volumes) |
 | `DevOps_Interview_Answers.pdf` | Short answers to common DevOps questions |
 | `DevOps_Interview_Guide.pdf` | Comprehensive interview guide |
 | `DevOps_Interview_QA_Guide.pdf` | Q&A focused guide |
 | `DevOps_Interview_QA_Guide_2.pdf` | Q&A guide volume 2 |
+| `DevOps_Interview_TopQ20.pdf` | Top 20 DevOps interview questions |
 | `DevOps_Scenario_Interview_QA.pdf` | Scenario-based Q&A |
 
 ---
@@ -69,6 +70,7 @@ These PDFs complement the Markdown Q&A files in this repository with additional 
 | `Docker_Interview_QA_Extended.pdf` | Docker (Extended) |
 | `Ansible_Interview_QA_0to3Years.pdf` | Ansible (0–3 years) |
 | `Terraform_Interview_QA_0_3_Years.pdf` | Terraform (0–3 years) |
+| `Terraform_Interview_QA_2.pdf` | Terraform Q&A (Volume 2) |
 | `Terraform_Interview_QA_3_5yrs.pdf` | Terraform (3–5 years) |
 | `Terraform_Interview_QA.pdf` | Terraform Q&A |
 | `CICD_Interview_Prep.pdf` | CI/CD |
