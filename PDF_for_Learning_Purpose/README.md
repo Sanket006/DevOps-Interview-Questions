@@ -1,6 +1,6 @@
 # 📖 PDF Learning Resources
 
-> A curated collection of **50 reference resources** covering DevOps interview preparation, company-specific guides, tool-specific Q&A, and extended learning material.
+> A curated collection of **52 reference resources** covering DevOps interview preparation, company-specific guides, tool-specific Q&A, and extended learning material.
 
 ---
 
@@ -50,6 +50,7 @@ These PDFs complement the Markdown Q&A files in this repository with additional 
 | File | Level |
 |---|---|
 | `DevOps_L1_Interview_QnA.pdf` | L1 (Entry-level) |
+| `DevOps_Interview_Questions_0-3_Years.pdf` | Entry-to-Associate (0–3 years) |
 | `devops_sre_interview_qa.pdf` | SRE / DevOps crossover |
 | `DevOps_Senior_Interview_Prep.pdf` | Senior DevOps Engineer |
 | `Cloud Engineer Interview Questions.pdf` | Cloud Engineer |
@@ -98,7 +99,7 @@ These PDFs complement the Markdown Q&A files in this repository with additional 
 |---|---|
 | Applying to IBM / EY / Capgemini | Company-specific PDFs above |
 | General DevOps interview prep | `DevOps_Interview_Guide.pdf` + `DevOps_Interview_QA_1–7.pdf` |
-| Entry-level preparation | `DevOps_L1_Interview_QnA.pdf` + `Cloud Engineer Interview Answers L1.pdf` |
+| Entry-level preparation | `DevOps_L1_Interview_QnA.pdf` + `DevOps_Interview_Questions_0-3_Years.pdf` + `Cloud Engineer Interview Answers L1.pdf` |
 | Kubernetes deep-dive | `100 kubernetes Q&A.pdf` + `Kubernetes_Interview_QA_0_3_Years.pdf` |
 | SRE role | `devops_sre_interview_qa.pdf` + `DevOps_Senior_Interview_Prep.pdf` |
 
